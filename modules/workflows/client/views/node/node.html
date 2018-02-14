@@ -1,0 +1,29 @@
+<div
+  id="{{node.id}}"
+  ng-attr-style="position: absolute; top: {{ node.y }}px; left: {{ node.x }}px;"
+  ng-dblclick="callbacks.doubleClick($event)">
+  <div class="innerNode" ng-attr-style="background-color: {{node.color}};" tooltip-placement="right" tooltip="Course: {{node.config_data.coursename}}">
+    <p>{{ node.name }} / {{ node.sudo }}</p>
+
+    <div class="{{flowchartConstants.topConnectorClass}}">
+      <div fc-magnet
+           ng-repeat="connector in modelservice.nodes.getConnectorsByType(node, flowchartConstants.topConnectorType)">
+        <div fc-connector ng-attr-style="background-color: {{node.connColor}};"></div>
+      </div>
+    </div>
+    <div class="{{flowchartConstants.bottomConnectorClass}}">
+      <div fc-magnet
+           ng-repeat="connector in modelservice.nodes.getConnectorsByType(node, flowchartConstants.bottomConnectorType)">
+        <div fc-connector ng-attr-style="background-color: {{node.connColor}};">
+          <div class="connector-name" ng-if="$index === 0">P</div>
+          <div class="connector-name" ng-if="$index === 1">F</div>
+        </div>
+      </div>
+    </div>
+  </div>
+<!--
+  <div class="fc-nodedelete" ng-click="modelservice.nodes.delete(node)">
+    &times;
+  </div>
+-->
+</div>

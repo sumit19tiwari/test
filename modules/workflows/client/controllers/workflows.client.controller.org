@@ -1,0 +1,476 @@
+(function () {
+    'use strict';
+
+    // Workflows controller
+    angular
+            .module('workflows')
+            .controller('WorkflowsController', WorkflowsController);
+
+    WorkflowsController.$inject = ['$scope', '$state', '$window', 'Authentication', 'workflowResolve', 'Modelfactory', 'flowchartConstants', '$modal', '$http', 'WKdraftService', '$interval'];
+
+    function WorkflowsController($scope, $state, $window, Authentication, workflow, Modelfactory, flowchartConstants, $modal, $http, WKdraftService, $interval) {
+
+        var vm = this;
+        var nextNodeID = 1,
+            nextConnectorID = 1,
+            currentDraftID = 1;
+        
+        //vm.model = {nodes:[{name:"ngFlowchart",id:2,x:400,y:100,color:'#000',borderColor:'#000',connectors:[{type:flowchartConstants.bottomConnectorType,id:9},{type:flowchartConstants.bottomConnectorType,id:10}]},{name:"Implemented with AngularJS",id:3,x:400,y:300,color:'#F15B26',connectors:[{type:flowchartConstants.topConnectorType,id:1},{type:flowchartConstants.topConnectorType,id:2},{type:flowchartConstants.topConnectorType,id:3},{type:flowchartConstants.bottomConnectorType,id:4},{type:flowchartConstants.bottomConnectorType,id:5},{type:flowchartConstants.bottomConnectorType,id:12}]},{name:"Easy Integration",id:4,x:200,y:600,color:'#000',borderColor:'#000',connectors:[{type:flowchartConstants.topConnectorType,id:13},{type:flowchartConstants.topConnectorType,id:14},{type:flowchartConstants.topConnectorType,id:15}]},{name:"Customizable templates",id:5,x:600,y:600,color:'#000',borderColor:'#000',connectors:[{type:flowchartConstants.topConnectorType,id:16},{type:flowchartConstants.topConnectorType,id:17},{type:flowchartConstants.topConnectorType,id:18}]}],edges:[{source:10,destination:1},{source:5,destination:14},{source:5,destination:17}]};
+        vm.model = {
+            nodes: [],
+            edges: []
+        }
+        
+        WKdraftService.query(function (res) { // successCB
+            console.log(res);
+            if (res.data != null) {
+                currentDraftID = parseInt(res.data.draftId + 1);
+            }
+        }, function (res) { // failureCB
+            console.log(res);
+        });
+
+        function readyWorkflowdata(callback) {
+            var dataPushed = new Array();
+            if (vm.model.nodes == 0) {
+                callback(dataPushed);
+            }
+            var counter = 0;
+            angular.forEach(vm.model.nodes, function (value, key) {
+                var nodeObject = {};
+                nodeObject.state_name = value.name;
+                nodeObject.course_id = value.config_data.course;
+                nodeObject.duration = value.config_data.duration;
+                nodeObject.transition = {};
+                nodeObject.transition.timelapse = value.config_data.next_state_period;
+                if (value.config_data.hasOwnProperty('next_state_period')) {
+                    nodeObject.transition.condition = value.config_data.passing_percentage;
+                    nodeObject.transition.next_state = {};
+                    // nodeObject.transition.next_state
+                    var bottomConnectorValues = value.connectors.filter(function (value) {
+                        return value.type === 'bottomConnector';
+                    });
+                    console.info("bottom connector - ", bottomConnectorValues);
+                    angular.forEach(bottomConnectorValues, function (value, key) {
+                        console.info("edge list - ", edgeMappingList);
+                        console.info("edge list key - ", 'E' + value.id);
+                        console.log(edgeMappingList['E' + value.id]);
+                        if (typeof edgeMappingList['E' + value.id] != 'undefined') {
+                            // have edge
+                            //alert("inisde");
+                            var destinationConnector = edgeMappingList['E' + value.id].destination;
+                            var connectorDetails = connectorsMappingList['C' + value.id];
+                            console.log("connector dtaa ", connectorDetails);
+                            if (connectorDetails.edge_flag == "P") {
+                                nodeObject.transition.next_state.pass = "S" + connectorDetails.state_name;
+                            } else if (connectorDetails.edge_flag == "F") {
+                                nodeObject.transition.next_state.fail = "S" + connectorDetails.state_name;
+                            } else {
+                                console.log("last");
+                            }
+
+                        } else {
+
+                            console.log("else");
+                        }
+                    });
+
+                } else {
+                    nodeObject.transition.condition = NULL
+                }
+                dataPushed.push(nodeObject);
+                counter++;
+                if (vm.model.nodes.length == counter) {
+                    callback(dataPushed);
+                }
+
+            });
+
+        }
+
+        function saveToDraft() {
+            readyWorkflowdata(function (dataPushed) {
+                setTimeout(function () {
+                    if (dataPushed.length > 0) {
+
+                        var data = {};
+                        var ts = Math.round((new Date()).getTime() / 1000);
+                        data.name = "" + ts;
+                        data.visualdata = vm.model;
+                        data.data = dataPushed;
+                        data.draftId = currentDraftID;
+                        console.log(dataPushed);
+
+
+                        WKdraftService.save(data, function (res) { // successCB
+                            console.log(res);
+                        }, function (res) { // failureCB
+                            console.log(res);
+                        });
+
+                    }
+                }, 3000);
+            });
+        }
+        $interval(saveToDraft, 15000);
+        // $interval(saveToDraft, 10000);
+
+
+
+        $http.get("https://adzperform.stage1.qtrain.co/common/opcontroller/index.php?c=api&type=tag_fetch&eid=1")
+            .then(function (response) {
+                if (response.data.status == "OK") {
+                    $scope.course_list = response.data.data;
+                } else {
+                    // handle error condiotn here 
+                    alert("ERROR Occured");
+                }
+
+            });
+        //console.log($scope.course_list);
+        vm.flowchartselected = [];
+        var connectorsMappingList = new Array();
+        var edgeMappingList = new Array();
+        vm.state_counter = 1;
+        vm.modelservice = Modelfactory(vm.model, vm.flowchartselected);
+        vm.authentication = Authentication;
+        vm.workflow = workflow;
+        vm.error = null;
+        vm.form = {};
+        vm.remove = remove;
+        vm.save = save;
+
+
+
+        vm.saveConnectorMapping = function (newState) {
+            var isPfEdge = true,
+                    connId = -1,
+                    connLen = newState.connectors.length;
+            for (var i = 0; i < connLen; i++) {
+
+                connId = 'C' + newState.connectors[i].id;
+                connectorsMappingList[connId] = {};
+                connectorsMappingList[connId].state_name = newState.id;
+                //connectorsMappingList[connId].edge_flag = "E";
+                console.error(newState.connectors[i].type);
+                if (newState.connectors[i].type === 'bottomConnector') {
+                    console.log("inise");
+                    if (isPfEdge) {
+                        console.log("step1 ");
+                        isPfEdge = false;
+                        connectorsMappingList[connId].edge_flag = "P";
+                    } else {
+                        console.log("step 2");
+                        //isPfEdge = true;
+                        connectorsMappingList[connId].edge_flag = "F";
+                    }
+                }
+            }
+
+            console.info('connectorsMappingList = ', connectorsMappingList);
+        }
+        //Adding Menu via modal
+        vm.state_configuration = function (size, parentSelector, $document) {
+            $scope.state = "S" + vm.state_counter;
+
+            var parentElem = parentSelector ? angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+            //$scope.course_change = vm.course_change;
+
+            // $scope.course_list = ["Emil", "Tobias", "Linus"];
+            var modalInstance = $modal.open({
+                animation: true,
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: 'modules/workflows/client/views/modal/add-menu.modal.client.view.html',
+                controller: 'AddMenuModalController',
+                controllerAs: 'vm',
+                size: size,
+                scope: $scope,
+                appendTo: parentElem
+            });
+        }
+
+        vm.edit_state_conf = function (size, parentSelector, $document) {
+            /* console.log("VIKAS");
+             console.log(vm.flowchartselected[0]); */
+            $scope.state = {};
+            $scope.state.state_name = vm.flowchartselected[0].config_data.state_name;
+
+            var parentElem = parentSelector ? angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined;
+            $scope.edit = true;
+            $scope.state.connectors = 0;
+            $scope.state.previous_connectors = 0;
+
+            angular.forEach(vm.flowchartselected[0].connectors, function (value, key) {
+                console.log(key);
+                console.log(value);
+                if (value.type === 'topConnector') {
+                    $scope.state.connectors++;
+                    $scope.state.previous_connectors++;
+                }
+            });
+
+            $scope.state.have_assessment = 1;
+            $scope.state.course = vm.flowchartselected[0].config_data.course;
+            $scope.state.duration = vm.flowchartselected[0].config_data.duration;
+            $scope.state.next_state_period = vm.flowchartselected[0].config_data.next_state_period;
+            $scope.state.passing_percentage = vm.flowchartselected[0].config_data.passing_percentage;
+
+            // $scope.course_list = ["Emil", "Tobias", "Linus"];
+            var modalInstance = $modal.open({
+                animation: true,
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: 'modules/workflows/client/views/modal/add-menu.modal.client.view.html',
+                controller: 'EditStateModalController',
+                controllerAs: 'vm',
+                size: size,
+                scope: $scope,
+                appendTo: parentElem
+            });
+        }
+
+
+        $scope.$on('editStageConf', function (evt, data) {
+
+            angular.forEach(vm.model.nodes, function (value, key) {
+                if (value.name == data.state_name) {
+                    vm.model.nodes[key].config_data = data;
+                    //console.log(vm.model.nodes[key]);
+                    if (data.previous_connectors != data.connectors) {
+                        if (data.previous_connectors > data.connectors) { // decrease connectors
+                            vm.decreaseTopConnectors(key, data.previous_connectors - data.connectors);
+                        } else { // increase connectors
+                            vm.increaseTopConnectors(key, data.connectors - data.previous_connectors);
+                        }
+                    }
+                    return false;
+                }
+
+            });
+
+        });
+
+        $scope.$on('addStageConf', function (evt, data) {
+
+            addNewStage(data);
+        });
+        // Remove existing Workflow
+        function remove() {
+            if ($window.confirm('Are you sure you want to delete?')) {
+                vm.workflow.$remove($state.go('workflows.list'));
+            }
+        }
+        vm.save_workflow = function(){
+            /* var modalInstance = $modal.open({
+                animation: true,
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: 'modules/workflows/client/views/modal/user-assign.modal.client.view.html',
+                controller: 'UserAssignModalController',
+                controllerAs: 'vm',
+                //size: size,
+                scope: $scope
+                //appendTo: parentElem
+            });
+            return false; */
+             readyWorkflowdata(function (dataPushed) {
+                setTimeout(function () {
+                    if (dataPushed.length > 0) {
+
+                        //var data = {};
+                        var ts = Math.round((new Date()).getTime() / 1000);
+                        vm.workflow.name = "" + ts;
+                        vm.workflow.visualdata = vm.model;
+                        vm.workflow.data = dataPushed;
+                        vm.workflow.draftId = currentDraftID;
+                        
+
+                        
+                        vm.workflow.$save(function (res) { // successCB
+                            console.log(res);
+                        }, function (res) { // failureCB
+                            console.log(res);
+                        });
+
+                    }
+                }, 3000);
+            });
+        }
+        // Save Workflow
+        function save(isValid) {
+            /* if (!isValid) {
+                $scope.$broadcast('show-errors-check-validity', 'vm.form.workflowForm');
+                return false;
+            } */
+
+            /* vm.workflow.visualdata = vm.model;
+             vm.workflow.data = dataPushed;
+             vm.workflow.draftId = currentDraftID;
+             console.log(vm.workflow); */
+
+            // TODO: move create/update logic to service
+            if (vm.workflow._id) {
+                //vm.workflow.$update(successCallback, errorCallback);
+            } else {
+                //vm.workflow.$save(successCallback, errorCallback);
+            }
+
+            function successCallback(res) {
+                $state.go('workflows.view', {
+                    workflowId: res._id
+                });
+            }
+
+            function errorCallback(res) {
+                vm.error = res.data.message;
+            }
+        }
+
+        function addNewStage(data) {
+            // console.log("NEW DATA");
+            // console.log(data);
+            var nodeName = vm.nextNodeID;
+            var bottomConnectorCount = 1;
+
+            if (!nodeName) {
+                return;
+            }
+            if (data.have_assessment) {
+                bottomConnectorCount = 2;
+            } else {
+                bottomConnectorCount = 1;
+            }
+
+            var newNode = {
+                name: 'S' + vm.state_counter,
+                config_data: data,
+                id: vm.nextNodeID++,
+                x: 200,
+                y: 100,
+                color: '#F15B26',
+                connectors: []
+            };
+
+            if (vm.state_counter !== 1) {
+                newNode.connectors.push({
+                    id: vm.nextConnectorID++,
+                    type: flowchartConstants.topConnectorType
+                });
+            }
+
+            for (var i = 0; i < bottomConnectorCount; i++) {
+                newNode.connectors.push({
+                    id: vm.nextConnectorID++,
+                    type: flowchartConstants.bottomConnectorType
+                }
+                );
+            }
+
+            vm.state_counter++;
+            vm.model.nodes.push(newNode);
+            vm.saveConnectorMapping(newNode);
+            //  console.log(vm.model.nodes);
+            //model.nodes.push(newNode); 
+        }
+
+        vm.callbacks = {
+            edgeAdded: function (edge) {
+                console.log("edge added");
+                console.log(edge);
+                edgeMappingList['E' + edge.source] = edge;
+            },
+            nodeCallbacks: {
+                'doubleClick': function (event) {
+                    // console.log(event);
+                    var selectedNodes = vm.modelservice.nodes.getSelectedNodes(vm.model);
+                    // console.log(selectedNodes);
+                    // console.log(vm.model.nodes);
+                    vm.edit_state_conf();
+
+                }
+            }
+        };
+
+    }
+
+    angular
+            .module('workflows')
+            .controller('AddMenuModalController', AddMenuModalController);
+
+    AddMenuModalController.$inject = ['$modalInstance', '$scope'];
+
+    function AddMenuModalController($modalInstance, $scope) {
+        var vm = this;
+
+        vm.menu = {};
+        vm.error = null;
+        vm.form = {};
+        vm.cancel = cancel;
+        vm.saveMenu = save;
+        vm.state = {};
+        vm.state.state_name = $scope.state;
+        vm.state.have_assessment = 0;
+        // Save Feature
+        function save(isValid) {
+            if (!isValid) {
+                $scope.$broadcast('show-errors-check-validity', 'vm.form.menusForm');
+                return false;
+            }
+            //console.log(vm);
+            $scope.$emit('addStageConf', vm.state);
+            $modalInstance.dismiss('cancel');
+        }
+
+        function cancel() {
+            $modalInstance.dismiss('cancel');
+        }
+
+        vm.course_change = function (current) {
+            console.log($scope.course_list[current]);
+
+            if ($scope.course_list[current].interaction > 0) {
+                vm.state.have_assessment = 1;
+            } else {
+
+                vm.state.have_assessment = 0;
+            }
+        }
+
+    }
+
+    angular
+            .module('workflows')
+            .controller('EditStateModalController', EditStateModalController);
+
+    EditStateModalController.$inject = ['$modalInstance', '$scope'];
+
+    function EditStateModalController($modalInstance, $scope) {
+        var vm = this;
+
+        vm.state = $scope.state;
+
+        vm.error = null;
+        vm.form = {};
+        vm.cancel = cancel;
+        vm.saveMenu = save;
+        vm.edit = true;
+
+        // Save Feature
+        function save(isValid) {
+
+            if (!isValid) {
+                $scope.$broadcast('show-errors-check-validity', 'vm.form.menusForm');
+                return false;
+            }
+
+            $scope.$emit('editStageConf', vm.state);
+            $modalInstance.dismiss('cancel');
+        }
+
+        function cancel() {
+            $modalInstance.dismiss('cancel');
+        }
+
+    }
+}());

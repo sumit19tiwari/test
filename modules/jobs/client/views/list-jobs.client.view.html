@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Jobs</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="job in vm.jobs"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Assigned on
+        <span ng-bind="job.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="job.user" ng-bind="job.user.displayName"></span>
+      </small>
+      <!--<h4 class="list-group-item-heading" ng-bind="job._id"></h4>-->
+      <p>Workflow <b><span ng-bind="job.workflow.name"></span></b> was assigned to user <b><span ng-bind="job.username"></span></b> starting from <b><span ng-bind="job.assignedOn | date:'mediumDate'"></span></b>.
+      </p>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="!vm.jobs.length">
+    No Jobs yet, why don't you <a ui-sref="jobs.create">create one</a>?
+  </div>
+</section>

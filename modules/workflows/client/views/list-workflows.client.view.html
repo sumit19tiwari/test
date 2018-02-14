@@ -1,0 +1,24 @@
+<section>
+  <div class="page-header">
+    <h1>Workflows</h1>
+  </div>
+
+  <div class="list-group">
+    <a ng-repeat="workflow in vm.workflows"
+       ui-sref="workflows.view({ workflowId: workflow._id })"
+       class="list-group-item">
+
+      <small class="list-group-item-text">
+        Created on
+        <span ng-bind="workflow.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="workflow.user" ng-bind="workflow.user.displayName"></span>
+        <span ng-if="!workflow.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="workflow.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="!vm.workflows.length">
+    No Workflows yet, why don't you <a ui-sref="workflows.create">create one</a>?
+  </div>
+</section>

@@ -1,0 +1,47 @@
+<section>
+  <div class="page-header">
+    <h1>Edit Drafts</h1>
+  </div>
+  <div class="col-md-12">
+      <div class="form-group">
+        <div class="btn-group" role="group" aria-label="button-group">
+      	  <button class="btn btn-primary" ng-click="vm.addNewStage()" title="Add a new stage to the workflow">Add Stage</button>
+          <button class="btn btn-primary" ng-click="vm.activateWorkflow()" title="Activate the workflow">Activate</button>
+          <div class="btn-group" dropdown>
+            <button id="split-button" type="button" class="btn btn-primary" dropdown-toggle>Delete
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" dropdown-menu role="menu" aria-labelledby="split-button">
+              <li role="menuitem"><a href="#" ng-click="vm.deleteNode()">Selected Node</a></li>
+              <li class="divider"></li>
+              <li role="menuitem"><a href="#" ng-click="vm.deleteEdge()">Selected Edge</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <fc-canvas style="width: 100%;height: 500px;border:5px dotted;" model="vm.model" selected-objects="vm.flowchartselected" edge-style="line" callbacks="vm.callbacks"></fc-canvas>
+      </div>
+      <div class="form-group">
+      	<button class="btn btn-primary" ng-click="vm.saveWorkflowModal()" title="Save Workflow">Save Workflow</button>
+      </div>
+    <form style="display: none;" name="vm.form.workflowForm" class="form-horizontal" ng-submit="vm.save(vm.form.workflowForm.$valid)" novalidate>
+      <fieldset>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="name">Name</label>
+          <input name="name" type="text" ng-model="vm.workflow.name" id="name" class="form-control" placeholder="Name" required>
+          <div ng-messages="vm.form.workflowForm.name.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Workflow name is required.</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-default">Update</button>
+        </div>
+        <div ng-show="vm.error" class="text-danger">
+          <strong ng-bind="vm.error"></strong>
+        </div>
+      </fieldset>
+    </form>
+
+  </div>
+</section>

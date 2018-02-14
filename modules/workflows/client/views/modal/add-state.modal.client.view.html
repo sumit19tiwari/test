@@ -1,0 +1,79 @@
+<form name="vm.form.stateForm" class="form-horizontal" ng-submit="vm.saveState(vm.form.stateForm.$valid)" novalidate>
+   <div class="modal-header">
+      <h3 class="modal-title" id="modal-title">{{vm.edit ? 'Edit State' : 'New State'}} </h3>
+   </div>
+   <div class="modal-body" id="modal-body">
+      <div class="row" style="margin:opx;padding:30px;">
+        <div ng-show="vm.error" class="text-danger">
+            <strong ng-bind="vm.error"></strong>
+        </div>
+
+        <div class="form-group" show-errors>
+            <label class="control-label" for="stateId">State Id</label>
+            <input name="stateId" type="text" ng-model="vm.state.stateId"  id="stateId" class="form-control" ng-disabled="true">
+        </div>
+        <div class="form-group" show-errors>
+            <label class="control-label" for="stateName">State Name</label>
+            <input  autocomplete="off" name="stateName" type="text" ng-model="vm.state.stateName" id="stateName" class="form-control" placeholder="Name" required>
+            <div ng-messages="vm.form.stateForm.stateName.$error" role="alert">
+              <p class="help-block error-text" ng-message="required">This field is required.</p>
+            </div>
+        </div>
+        <div class="form-group" show-errors>
+            <label class="control-label" for="stateDesc">State Description</label>
+            <input  autocomplete="off" name="stateDesc" type="text" ng-model="vm.state.stateDesc" id="stateDesc" class="form-control" placeholder="Description">
+        </div>
+        <div class="form-group" show-errors>
+            <label class="control-label" for="course">Course</label>
+            <select class="form-control" name="course" ng-model="vm.state.course" ng-change="vm.course_change(vm.state.course)" required>
+               <option ng-selected="{{each_course.id==vm.state.course}}" ng-repeat="each_course in course_list" value="{{each_course.id}}">{{each_course.title}}</option>
+            </select>
+            <div ng-messages="vm.form.stateForm.course.$error" role="alert">
+              <p class="help-block error-text" ng-message="required">This field is required.</p>
+            </div>
+        </div>
+        <div class="form-group" show-errors>
+            <label class="control-label" for="duration">Duration of State</label>
+            <input  autocomplete="off" name="duration" type="number" min="1" ng-model="vm.state.duration" id="duration" class="form-control" placeholder="In Days" required>
+            <div ng-messages="vm.form.stateForm.duration.$error" role="alert">
+              <p class="help-block error-text" ng-message="required">This field is required.</p>
+              <p class="help-block error-text" ng-message="number">Not a valid number.</p>
+              <p class="help-block error-text" ng-message="min">Minimum duration must be at least one day.</p>
+            </div>
+        </div>
+        <div class="form-group" show-errors>
+            <label class="control-label" for="next_state_period">Time Period to Next State</label>
+            <input  autocomplete="off" name="next_state_period" type="number" min="0" ng-model="vm.state.next_state_period" id="next_state_period" class="form-control" placeholder="Time period in days" required>
+            <div ng-messages="vm.form.stateForm.next_state_period.$error" role="alert">
+              <p class="help-block error-text" ng-message="required">This field is required.</p>
+              <p class="help-block error-text" ng-message="number">Not a valid number.</p>
+              <p class="help-block error-text" ng-message="min">Minimum Time Period must be at least not negative.</p>
+            </div>
+        </div>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="transit_immediate">
+            Transition to Next State is Immediately
+            <input name="transit_immediate" type="radio" ng-model="vm.state.transitFlag" value="I" id="transit_immediate" class="form-control">
+          </label>
+          <label class="control-label" for="transit_immediate">
+            Transition to Next State is Fixed
+            <input name="transit_immediate" type="radio" ng-model="vm.state.transitFlag" value="F" id="transit_immediate" class="form-control">
+          </label>
+        </div>
+        <input style="display: none;" autocomplete="off" name="have_assessment" type="number" min="0" ng-model="vm.state.have_assessment" id="have_assessment" class="form-control" required>
+        <div class="form-group" ng-if="vm.state.have_assessment"  show-errors>
+            <label class="control-label" for="passing_percentage">Average Passing Percentage (Across All Assessments)</label>
+            <input autocomplete="off" name="passing_percentage" type="number" min="0" ng-model="vm.state.passing_percentage" id="passing_percentage" class="form-control" placeholder="Passing percentage" required>
+            <div ng-messages="vm.form.stateForm.passing_percentage.$error" role="alert">
+            <p class="help-block error-text" ng-message="min">This passing percentage not negative.</p>
+              
+            </div>
+        </div>
+      </div>
+   </div>
+   <br>
+   <div class="modal-footer">
+      <button class="btn btn-primary" type="submit">{{vm.edit ? 'Update' : 'Add'}}</button>
+      <button class="btn btn-warning" type="button" ng-click="vm.cancel()">Close</button>
+   </div>
+</form>

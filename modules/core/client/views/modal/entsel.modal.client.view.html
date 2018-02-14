@@ -1,0 +1,25 @@
+<form name="vm.form.entSelForm" class="form-horizontal" ng-submit="vm.saveEnterprise(vm.form.entSelForm.$valid)" novalidate>
+   <div class="modal-header">
+      <h3 class="modal-title" id="modal-title">Select Enterprise</h3>
+   </div>
+   <div class="modal-body" id="modal-body">
+      <div class="row" style="margin:opx;padding:30px;">
+        <div ng-show="vm.error" class="text-danger">
+            <strong ng-bind="vm.error"></strong>
+        </div>
+        <div class="form-group" show-errors>
+            <label class="control-label" for="enterprise">Enterprise</label>
+            <select class="form-control" name="enterprise" ng-model="vm.selectedEnt">
+               <option ng-selected="{{ent.eid==vm.selectedEnt}}" ng-repeat="ent in entList" value="{{ent.eid}}">{{ent.url}} - {{ent.title}}</option>
+            </select>
+            <div ng-messages="vm.form.entSelForm.enterprise.$error" role="alert">
+              <p class="help-block error-text" ng-message="required">This field is required.</p>
+            </div>
+        </div>
+      </div>
+   </div>
+   <br>
+   <div class="modal-footer">
+      <button class="btn btn-primary" type="submit">Select</button>
+   </div>
+</form>

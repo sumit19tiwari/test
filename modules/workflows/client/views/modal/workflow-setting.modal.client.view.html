@@ -1,0 +1,73 @@
+<form name="vm.form.workflowForm" class="form-horizontal" ng-submit="vm.saveWorkflow(vm.form.workflowForm.$valid)" novalidate>
+<div class="modal-header">
+  <h3 class="modal-title" id="modal-title">{{vm.edit ? 'Edit Workflow' : 'New Workflow'}} </h3>
+</div>
+
+<div class="modal-body" id="modal-body">
+    <div class="row" style="margin:opx;padding:30px;">
+      <div ng-show="vm.error" class="text-danger">
+        <strong ng-bind="vm.error"></strong>
+      </div>
+
+  	
+      <div class="form-group" show-errors>
+        <label class="control-label" for="name">Name</label>
+         <input ng-if="vm.edit" name="name" type="text" disabled ng-model="vm.workflow.name" id="name" class="form-control">
+         <input ng-if="!vm.edit" name="name" type="text" ng-model="vm.workflow.name" id="name" class="form-control">
+        <div ng-messages="vm.form.workflowForm.name.$error" role="alert">
+          <p class="help-block error-text" ng-message="required">Workflow name is required.</p>
+        </div>
+      </div>   
+    </div>
+
+
+
+
+<!--
+		<div class="form-group" show-errors>
+      <label class="control-label" for="duration">Duration</label>
+      <input name="duration" type="text" ng-model="vm.workflow.duration" id="duration" class="form-control" placeholder="Duration (In Days)" required>
+      <div ng-messages="vm.form.workflowForm.name.$error" role="alert">
+        <p class="help-block error-text" ng-message="required">Menu name is required.</p>
+      </div>
+    </div>
+
+    <div class="form-group" >
+      <label class="control-label" for="duration">Course</label>
+      <select class="form-control"  ng-model="selectedName" ng-options="key as value for (key , value) in course_list"></select>
+      <div ng-messages="vm.form.workflowForm.name.$error" role="alert">
+        <p class="help-block error-text" ng-message="required">Menu name is required.</p>
+      </div>
+    </div>
+
+		<div class="form-group" show-errors>
+      <label class="control-label" for="duration">Duration of workflow</label>
+      <input name="duration" type="number" min="0" ng-model="vm.menu.duration" id="duration" class="form-control" placeholder="In Days" required>
+      <div ng-messages="vm.form.workflowForm.duration.$error" role="alert">
+        <p class="help-block error-text" ng-message="required">Menu link is required.</p>
+      </div>
+    </div>
+
+		<div class="form-group" show-errors>
+      <label class="control-label" for="next_workflow_period">Time period for next workflow</label>
+      <input name="next_workflow_period" type="number" min="0" ng-model="vm.menu.next_workflow_period" id="next_workflow_period" class="form-control" placeholder="Time period in days" required>
+      <div ng-messages="vm.form.workflowForm.next_workflow_period.$error" role="alert">
+        <p class="help-block error-text" ng-message="required">Menu icon is required.</p>
+      </div>
+    </div>
+
+
+		<div class="form-group" ng-show="{{have_assessment}}" show-errors>
+      <label class="control-label" for="passing_percentage">Passing percentage</label>
+      <input name="passing_percentage" type="text" ng-model="vm.menu.passing_percentage" id="passing_percentage" class="form-control" placeholder="Passing percentage" required>
+      <div ng-messages="vm.form.workflowForm.sel_link.$error" role="alert">
+        <p class="help-block error-text" ng-message="required">Menu sel-link is required.</p>
+      </div>
+    </div>-->
+</div>
+<br>
+<div class="modal-footer">
+  <button class="btn btn-primary" type="submit">{{vm.edit ? 'Update' : 'Save'}}</button>
+  <button class="btn btn-warning" type="button" ng-click="vm.cancel()">Close</button>
+</div>
+</form>

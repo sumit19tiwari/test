@@ -1,0 +1,53 @@
+<form name="vm.form.user_assigner" class="form-horizontal" novalidate>
+    <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Settings for workflow</h3>
+    </div>
+    <div class="modal-body" id="modal-body">
+        <div class="row" style="margin:opx;padding:30px;padding-top: 5px;">
+            <div ng-show="vm.error" class="text-danger">
+                <strong ng-bind="vm.error"></strong>
+            </div>
+
+            <tabset>
+                <tab heading="General">
+                    <div class="form-group" show-errors>
+                        <label class="control-label" for="assing_to_group">Assign to group</label>
+                        <div class="form-check">
+                            <label class="form-radio-label">
+                                <input ng-model="vm.data.assing_to_group" id="assing_to_group" class="form-check-radio" type="radio" value="0">
+                                Yes
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-radio-label">
+                                <input ng-model="vm.data.assing_to_group" id="assing_to_group" class="form-check-radio" type="radio" value="1">
+                                No
+                            </label>
+                        </div>
+                        
+                        <div ng-messages="vm.form.menusForm.next_state_period.$error" role="alert">
+                            <p class="help-block error-text" ng-message="required">Next state period is required.</p>
+                        </div>
+                    </div>
+                    <div class="form-group" show-errors>
+                        
+                    </div>
+                </tab>
+
+                <!--<tab heading="Certification">
+                  <div ng-form="subjectForm">
+                    <input type="text" name="emailSubject" class="input-xxlarge" ng-model="campaign.info.emailSubject" placeholder="Please enter email subject" required/>
+                    <span ng-show="subjectForm.emailSubject.$dirty && subjectForm.emailSubject.$error.required" class="help-inline">
+                      Required
+                    </span>
+                  </div>
+                </tab>  -->
+            </tabset>
+        </div>
+    </div>
+    <br>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="submit">{{vm.edit ? 'Update' : 'Add'}}</button>
+        <button class="btn btn-warning" type="button" ng-click="vm.cancel()">Close</button>
+    </div>
+</form>

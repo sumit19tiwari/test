@@ -1,0 +1,100 @@
+<section>
+  <div class="page-header">
+    <h1>{{vm.job._id ? 'Edit Job' : 'New Job'}}</h1>
+  </div>
+  <div class="col-md-12">
+    <form name="vm.form.jobForm" class="form-horizontal" ng-submit="vm.save(vm.form.jobForm.$valid)" novalidate>
+      <fieldset>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="workflow">Workflow</label>
+          <select name="workflow" class="form-control" ng-model="vm.job.workflow"
+            ng-options="value.name for value in workflows" required>
+            <option selected="selected" value="">Select Workflow</option>
+          </select>
+          <div ng-messages="vm.form.jobForm.workflow.$error" role="alert">
+             <p class="help-block error-text" ng-message="required">Please Select a Workflow</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="assignedOn">Start Date</label>
+          <p class="input-group" >
+            <input id="assignedOn" name="assignedOn" type="text" class="form-control"
+              datepicker-popup="{{format}}" min-date="dateOptions.minDate"
+              ng-model="vm.job.assignedOn" is-open="popup"
+              required /> <span class="input-group-btn">
+              <button type="button" class="btn btn-default"
+                ng-click="openDate($event)">
+                <i class="glyphicon glyphicon-calendar"></i>
+              </button>
+            </span>
+          </p>
+          <div ng-messages="vm.form.jobForm.assignedOn.$error" role="alert">
+             <p class="help-block error-text" ng-message="required">Please Enter a Start Date</p>
+          </div>
+        </div>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="path">Select Users</label>
+          <table class="table table-hover table-responsive">
+            <thead class="thead-default">
+              <tr>
+                <th>Select All</th>
+                <th>S. No.</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Location</th>
+                <th>Vertical</th>
+                <th>Subscribed On</th>
+              </tr>
+              <tr>
+                <th>
+                  <input name="selectAll" type="checkbox" ng-model="isAllSelected" id="selectAll" class="form-control" ng-click="toggleAll()">
+                </th>
+                <th>&nbsp;</th>
+                <th>
+                  <input type="text" ng-model="searchUser" placeholder="Search User" class="form-control">
+                </th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="user in searchableList | filter:searchUser">
+                <td>
+                  <input name="selectedUsers" type="checkbox" ng-model="user.selected" ng-value="{{user}}" id="selectedUsers" class="form-control" ng-change="optionToggled()">
+                </td>
+                <td>{{$index+1}}</td>
+                <td>
+                  {{user.username}}
+                </td>
+                <td>
+                  {{user.email}}
+                </td>
+                <td>
+                  {{user.mobile}}
+                </td>
+                <td>
+                  {{user.location}}
+                </td>
+                <td>
+                  {{user.vertical}}
+                </td>
+                <td ng-bind="user.subdate | date:'mediumDate'">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-default">{{vm.job._id ? 'Update' : 'Create'}}</button>
+        </div>
+        <div ng-show="vm.error" class="text-danger">
+          <strong ng-bind="vm.error"></strong>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</section>
