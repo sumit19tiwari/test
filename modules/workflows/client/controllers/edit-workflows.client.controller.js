@@ -111,12 +111,10 @@
     // Save Workflow
     function save(isValid) {
       if (!isValid) {
-        //console.log(vm.workflow);
         return false;
       }
       //validation service is called to check workflow validation.
       var valid=WorkflowsValidationService.validate(vm.workflow.visualdata,vm.workflow.data,edgeMappingList);
-
       if(!valid){
         //console.log('valid is called');
         alert('Invalid Workflow ');
@@ -124,6 +122,7 @@
       }
 
       // TODO: move create/update logic to service
+      console.log('edit vm workflow',vm.workflow);
       if (vm.workflow._id) {
         vm.workflow.$update(successCallback, errorCallback);
       } else {

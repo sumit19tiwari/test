@@ -99,12 +99,31 @@
 
   getDraft.$inject = ['$stateParams', 'WKdraftService'];
 
-  function getDraft($stateParams, WKdraftService){
+  /*function getDraft($stateParams, WKdraftService){
+    console.log('getDraft is called');  
+    console.log('$stateParams.wkDraftId',$stateParams.wkDraftId);
+    var wkdraftId=$stateParams.wkDraftId;
+     return WKdraftService.get(wkdraftId).$promise;
+  }*/
+    /*function getDraft($stateParams, WKdraftService){
     console.log('getDraft is called');  
     console.log('$stateParams.wkDraftId',$stateParams.wkDraftId);
     var wkdraftId=$stateParams.wkDraftId;
     return WKdraftService.getDraftById(wkdraftId,function(successCB){
       console.log('successCB',successCB)
-    }).$promise;  
+      return successCB;
+    }) 
+  }*/
+  function getDraft($stateParams,WKdraftService){
+
+   var wkdraftId=$stateParams.wkDraftId;
+    var promise = new Promise(function(resolve, reject) {
+        WKdraftService.getDraftById(wkdraftId,function(successCB){
+        console.log('successCB',successCB)
+        resolve(successCB);
+        }); 
+     });
+    return promise;
   }
+
 }());

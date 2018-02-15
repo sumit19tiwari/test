@@ -4,9 +4,9 @@
   angular.module('workflows')
     .factory('WKdraftService', WKdraftService);
 
-  WKdraftService.$inject = ['$http'];
+  WKdraftService.$inject = ['$http','$resource'];
 
-  function WKdraftService($http) {
+  function WKdraftService($http,$resource) {
     return {
       current: function (successCB, failureCB) {
         return $http.get('/api/workflows/draft/current/id').then(function successCallback(response) {
@@ -53,6 +53,17 @@
           failureCB(response);
         });
       }
+       /* get: function (wkDraftId) {
+          console.log('service is called');
+          console.log('service wkdraftId',wkDraftId);
+          return $resource('/api/workflows/wkdraft/:wkDraftId',{},
+            {
+              get: {
+                method:'GET'
+              }
+        });
+      }*/
+      
     };
   }
 }());

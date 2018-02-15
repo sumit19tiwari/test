@@ -12,8 +12,7 @@
   	
       <div class="form-group" show-errors>
         <label class="control-label" for="name">Name</label>
-         <input ng-if="vm.edit" name="name" type="text" disabled ng-model="vm.workflow.name" id="name" class="form-control">
-         <input ng-if="!vm.edit" name="name" type="text" ng-model="vm.workflow.name" id="name" class="form-control">
+         <input name="name" type="text" ng-model="vm.workflow.name" id="name" class="form-control">
         <div ng-messages="vm.form.workflowForm.name.$error" role="alert">
           <p class="help-block error-text" ng-message="required">Workflow name is required.</p>
         </div>
