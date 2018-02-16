@@ -77,8 +77,9 @@
         templateUrl:'modules/workflows/client/views/edit-draft.client.view.html',
         controller:'WorkflowEditDraftController',
         controllerAs:'vm',
-         resolve: {
-          workflowResolve: getDraft
+        resolve: {
+          wkDraftResolve: getDraft,
+          workflowResolve: newWorkflow
         }
       });
   }
@@ -99,30 +100,15 @@
 
   getDraft.$inject = ['$stateParams', 'WKdraftService'];
 
-  /*function getDraft($stateParams, WKdraftService){
-    console.log('getDraft is called');  
-    console.log('$stateParams.wkDraftId',$stateParams.wkDraftId);
-    var wkdraftId=$stateParams.wkDraftId;
-     return WKdraftService.get(wkdraftId).$promise;
-  }*/
-    /*function getDraft($stateParams, WKdraftService){
-    console.log('getDraft is called');  
-    console.log('$stateParams.wkDraftId',$stateParams.wkDraftId);
-    var wkdraftId=$stateParams.wkDraftId;
-    return WKdraftService.getDraftById(wkdraftId,function(successCB){
-      console.log('successCB',successCB)
-      return successCB;
-    }) 
-  }*/
   function getDraft($stateParams,WKdraftService){
 
-   var wkdraftId=$stateParams.wkDraftId;
+    var wkdraftId=$stateParams.wkDraftId;
     var promise = new Promise(function(resolve, reject) {
-        WKdraftService.getDraftById(wkdraftId,function(successCB){
-        console.log('successCB',successCB)
+      WKdraftService.getDraftById(wkdraftId,function(successCB){
+        console.log('successCB',successCB);
         resolve(successCB);
-        }); 
-     });
+      }); 
+    });
     return promise;
   }
 

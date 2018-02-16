@@ -10,27 +10,21 @@
               ng-class="{'glyphicon-   chevron-down': isopen, 'glyphicon-chevron-right': !isopen}">
            </i>                    
       </accordion-heading>
-    <ul>
-    <table ng-table="" class="table table-bordered" show-filter="true">
-    <tr ng-repeat="DraftIdData in vm.DraftIdData">
-        <td title="'Name'" filter="{ name: 'text'}" sortable="'name'">
-            {{DraftIdData.created}}
-      <a class="btn btn-default btn-sm"  ui-sref="wkdraft.edit({wkDraftId: DraftIdData._id})">
-          <span class="glyphicon glyphicon-pencil"></span> Edit 
-      </a>
-        <button type="button" class="btn btn-default btn-sm" ng-click="vm.showMessage()">
-          <span class="glyphicon glyphicon-eye-open"></span> View
-        </button>
-        </td>
-
-    </tr>
-
-  </table>
-     <!--<li ng-repeat ="DraftIdData in vm.DraftIdData">
-      <a ng-href = "#" ng-if="$first" >{{DraftIdData.created}}</a>
-      <a ng-href = "#" ng-if="!$first" onClick="alert('This is not recent draft.You can only edit recent Draft')">{{DraftIdData.created}}</a> 
-     </li>-->
-    </ul> 
+        <ul>
+          <table ng-table="" class="table table-bordered" show-filter="true">
+            <tr ng-repeat="DraftIdData in vm.DraftIdData">
+              <td title="'Name'" filter="{ name: 'text'}" sortable="'name'">
+                  {{DraftIdData.created}}
+                <a class="btn btn-default btn-sm"  ui-sref="wkdraft.edit({wkDraftId: DraftIdData._id})">
+                  <span class="glyphicon glyphicon-pencil"></span> Edit 
+                </a>
+              <button type="button" class="btn btn-default btn-sm" ng-click="vm.showMessage()">
+                <span class="glyphicon glyphicon-eye-open"></span> View
+              </button>
+              </td>
+            </tr>
+          </table>
+        </ul> 
 
     </accordion-group>    
   </accordion>

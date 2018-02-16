@@ -1,6 +1,6 @@
 <form name="vm.form.workflowForm" class="form-horizontal" ng-submit="vm.saveWorkflow(vm.form.workflowForm.$valid)" novalidate>
 <div class="modal-header">
-  <h3 class="modal-title" id="modal-title">{{vm.edit ? 'Edit Workflow' : 'New Workflow'}} </h3>
+  <h3 class="modal-title" id="modal-title">Edit Drafts </h3>
 </div>
 
 <div class="modal-body" id="modal-body">
@@ -12,7 +12,7 @@
   	
       <div class="form-group" show-errors>
         <label class="control-label" for="name">Name</label>
-         <input name="name" type="text" ng-model="vm.workflow.name" id="name" class="form-control">
+         <input name="name" type="text" ng-model="vm.wkdraft.name" id="name" class="form-control">
         <div ng-messages="vm.form.workflowForm.name.$error" role="alert">
           <p class="help-block error-text" ng-message="required">Workflow name is required.</p>
         </div>
@@ -23,7 +23,7 @@
 </div>
 <br>
 <div class="modal-footer">
-  <button class="btn btn-primary" type="submit">{{vm.edit ? 'Update' : 'Save'}}</button>
+  <button class="btn btn-primary" type="submit">Save</button>
   <button class="btn btn-warning" type="button" ng-click="vm.cancel()">Close</button>
 </div>
 </form>

@@ -45,7 +45,7 @@
         console.log('getdraftApiservice is called');
         console.log('wkDraftId',wkDraftId);
         return $http.get('/api/workflows/wkdraft/'+wkDraftId).then(function successCallback(response) {
-          console.log("##########################################");
+          //console.log("##########################################");
           console.log(response);
           successCB(response);
         },function errorCallback(response) {
@@ -53,16 +53,6 @@
           failureCB(response);
         });
       }
-       /* get: function (wkDraftId) {
-          console.log('service is called');
-          console.log('service wkdraftId',wkDraftId);
-          return $resource('/api/workflows/wkdraft/:wkDraftId',{},
-            {
-              get: {
-                method:'GET'
-              }
-        });
-      }*/
       
     };
   }

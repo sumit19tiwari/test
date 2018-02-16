@@ -3,14 +3,14 @@
   // Workflows controller
   angular
     .module('workflows')
-    .config(function (NodeTemplatePathProvider,IdleProvider, KeepaliveProvider,TitleProvider ) {
+    .config(function (NodeTemplatePathProvider) {
       NodeTemplatePathProvider.setTemplatePath('modules/workflows/client/views/node/node.html');
     }).controller('WorkflowEditDraftController', WorkflowEditDraftController);
 
-  WorkflowEditDraftController.$inject = ['$scope', '$state' ,'$window', 'Authentication', 'workflowResolve',
+  WorkflowEditDraftController.$inject = ['$scope', '$state' ,'$window', 'Authentication', 'workflowResolve','wkDraftResolve',
     'Modelfactory', 'flowchartConstants', '$modal', '$http', 'WKdraftService','WorkflowsValidationService', '$interval', 'Constants', 'EnterpriseManager'];
 
-  function WorkflowEditDraftController($scope, $state , $window, Authentication, workflow,
+  function WorkflowEditDraftController($scope, $state , $window, Authentication, workflow,wkdraft,
     Modelfactory, flowchartConstants, $modal, $http, WKdraftService,WorkflowsValidationService, $interval, Constants, EnterpriseManager) {
   
     $scope.user = Authentication.user;
@@ -21,9 +21,11 @@
 
     vm.authentication = Authentication;
     vm.workflow = workflow;
-    console.log('workflow',vm.workflow );
+    vm.wkdraft=wkdraft;
+    console.log('workflow',vm.workflow);
+    console.log('wkdraft',vm.wkdraft);
     
-    vm.model = vm.workflow.data.visualdata;
+    vm.model = vm.wkdraft.data.visualdata;
     //console.log('---------vm.model',vm.model);
     //console.log('---------vm.workflow',vm.workflow);
     stateIdValue.splice(0,stateIdValue.length);
@@ -40,10 +42,10 @@
     var nextNodeID = 0,
      // var nextNodeID = workflow.data.length + 1,
       nextConnectorID = largestNodeId+1,
-      currentDraftID = workflow.data.draftId,
+      currentDraftID = wkdraft.data.draftId,
       connectorsMappingList = [],
       edgeMappingList = [];
-    var stateCount = workflow.data.data.length + 1;
+    var stateCount = wkdraft.data.data.length + 1;
 
     vm.flowchartselected = [];
     vm.modelservice = new Modelfactory(vm.model, vm.flowchartselected);
@@ -101,26 +103,28 @@
 
     // Save Workflow
     function save(isValid) {
-        console.log('save is called');
+      console.log('save is called');
       if (!isValid) {
         //console.log(vm.workflow);
         return false;
       }
       //validation service is called to check workflow validation.
-      var valid=WorkflowsValidationService.validate(vm.workflow.visualdata,vm.workflow.data,edgeMappingList);
+      var valid=WorkflowsValidationService.validate(vm.wkdraft.visualdata,vm.wkdraft.data,edgeMappingList);
 
       if(!valid){
         alert('Invalid Workflow ');
         return false;
       }
+      console.log('vm.wkdraft',vm.wkdraft);
       console.log('vm.workflow',vm.workflow);
+      //merging workflow and wkdraft data
+      vm.workflow=angular.extend(vm.workflow, vm.wkdraft); 
       // TODO: move create/update logic to service
-      if (vm.workflow.data._id) {
-        console.log('if is called');
+
+      console.log('vm.workflow after merging',vm.workflow);
+      if (vm.wkdraft.data._id) {
         vm.workflow.$update(successCallback, errorCallback);
       } else {
-        console.log('else is called');
-
         vm.workflow.$save(successCallback, errorCallback);
       }
 
@@ -396,7 +400,7 @@
           //if (vm.workflow.visualdata.nodes.length === counter) {
           data.wkdata = dataPushed;
           data.wktransitions = tcounter;
-          console.log('@@@@@@@@@@@@@@@@@@data',data);
+          //console.log('@@@@@@@@@@@@@@@@@@data',data);
           callback(data);
         }
       }
@@ -438,8 +442,8 @@
     }
 
     // Open modal form to add a new state to the workflow
-    vm.saveWorkflowModal = function (size, parentSelector, $document,workflow) {
-      $scope.workflow = vm.workflow;
+    vm.saveWorkflowModal = function (size, parentSelector, $document,wkdraft) {
+      $scope.wkdraft = vm.wkdraft;
       var parentElem = parentSelector ? angular.element($document[0].querySelector('.modal-demo ' + parentSelector)) : undefined,
         modalInstance = $modal.open({
           animation: true,
@@ -459,20 +463,20 @@
 
     $scope.$on('saveWorkflow', function (evt, data) {
       createWorkflowdDataFromVisualData(function (cdata) {   
-      console.log('saveWorkflow is called');
-      console.log('vm.model',vm.model);
-      console.log('cdata',cdata);
-      console.log('data',data);
-      console.log('currentDraftID',currentDraftID); 
+        console.log('saveWorkflow is called');
+        console.log('vm.model',vm.model);
+        console.log('cdata',cdata);
+        console.log('data',data);
+        console.log('currentDraftID',currentDraftID); 
         if(vm.model.edges.length > 0 && cdata.wktransitions > 0 && cdata.wkdata.length > 0) {
-          vm.workflow.name = data.name;
-          vm.workflow.visualdata = vm.model;
-          vm.workflow.data = cdata.wkdata;
-          vm.workflow.draftId = currentDraftID;
-          vm.workflow.eid = enterprise;
+          vm.wkdraft.name = data.name;
+          vm.wkdraft.visualdata = vm.model;
+          vm.wkdraft.data = cdata.wkdata;
+          vm.wkdraft.draftId = currentDraftID;
+          vm.wkdraft.eid = enterprise;
         }
-        vm.workflow.data=cdata.wkdata;
-        vm.workflow.visualdata = vm.model;
+        vm.wkdraft.data=cdata.wkdata;
+        vm.wkdraft.visualdata = vm.model;
         save(true);
       });
     });
@@ -575,10 +579,10 @@
 
   WkDraftEditSettingModalController.$inject = ['$modalInstance', '$scope'];
 
-  function WkDraftEditSettingModalController($modalInstance, $scope,workflow) {
+  function WkDraftEditSettingModalController($modalInstance, $scope,wkdraft) {
     var vm = this;
 
-    vm.workflow = $scope.workflow;
+    vm.wkdraft = $scope.wkdraft;
     vm.error = null;
     vm.form = {};
     vm.cancel = cancel;
@@ -593,8 +597,9 @@
         return false;
       }
       //console.log(vm);
-    
-      $scope.$emit('saveWorkflow', vm.workflow);
+      
+      console.log('inside edit setting controller vm.wkdraft',vm.wkdraft);
+      $scope.$emit('saveWorkflow', vm.wkdraft);
       $modalInstance.dismiss('cancel');
     }
 

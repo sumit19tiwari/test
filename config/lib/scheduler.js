@@ -386,36 +386,36 @@
                   //TODO get passing figure - right now considering only pass state
                   //console.log(typeof current.transition.nextState.pass);
                   //console.log(typeof current.transition.nextState.fail);
-                  var score = res.data.score;
-                  if(typeof current.transition.nextState.pass !== 'undefined' && typeof current.transition.nextState.fail !== 'undefined') {
-                    current.status = 'IN-TRANSITION';
+                    var score = res.data.score;
+                    if(typeof current.transition.nextState.pass !== 'undefined' && typeof current.transition.nextState.fail !== 'undefined') {
+                      current.status = 'IN-TRANSITION';
                     // the passing condition
-                    if(score >= current.transition.condition) {
-                      current.nextId = current.transition.nextState.pass;
-                    } //the failing condition
-                    else {
-                      current.nextId = current.transition.nextState.fail;
-                    }
-                  } else if(typeof current.transition.nextState.pass !== 'undefined' && typeof current.transition.nextState.fail === 'undefined') {
-                    if(typeof current.transition.condition !== 'undefined') {
-                      // the passing condition
                       if(score >= current.transition.condition) {
+                        current.nextId = current.transition.nextState.pass;
+                      } //the failing condition
+                      else {
+                        current.nextId = current.transition.nextState.fail;
+                      }
+                    } else if(typeof current.transition.nextState.pass !== 'undefined' && typeof current.transition.nextState.fail === 'undefined') {
+                      if(typeof current.transition.condition !== 'undefined') {
+                      // the passing condition
+                        if(score >= current.transition.condition) {
+                          current.nextId = current.transition.nextState.pass;
+                          current.status = 'IN-TRANSITION';
+                        }
+                      } else {
                         current.nextId = current.transition.nextState.pass;
                         current.status = 'IN-TRANSITION';
                       }
-                    } else {
-                      current.nextId = current.transition.nextState.pass;
-                      current.status = 'IN-TRANSITION';
                     }
-                  }
-                  if(current.status === 'IN-TRANSITION') {
-                    if(current.transition.transitFlag === 'I') {
-                      current.nextTransitionDate = addDays(new Date(), current.transition.timelapse);
-                    } else if(current.transition.transitFlag === 'F') {
-                      current.nextTransitionDate = addDays(new Date(current.endDate.getTime()), current.transition.timelapse);
+                    if(current.status === 'IN-TRANSITION') {
+                      if(current.transition.transitFlag === 'I') {
+                        current.nextTransitionDate = addDays(new Date(), current.transition.timelapse);
+                      } else if(current.transition.transitFlag === 'F') {
+                        current.nextTransitionDate = addDays(new Date(current.endDate.getTime()), current.transition.timelapse);
+                      }
+                      ifUpdate = true;
                     }
-                    ifUpdate = true;
-                  }
                   }
                 }
               } else {

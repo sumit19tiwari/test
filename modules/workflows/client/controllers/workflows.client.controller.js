@@ -4,7 +4,7 @@
   // Workflows controller
   angular
     .module('workflows')
-    .config(function (NodeTemplatePathProvider ,IdleProvider, KeepaliveProvider,TitleProvider ) {
+    .config(function (NodeTemplatePathProvider ,IdleProvider, KeepaliveProvider,TitleProvider) {
       NodeTemplatePathProvider.setTemplatePath('modules/workflows/client/views/node/node.html');
       TitleProvider.enabled(false);
       IdleProvider.idle(10); // 10 minutes idle
@@ -16,7 +16,7 @@
     .controller('WorkflowsController', WorkflowsController)
     .run(function(Idle){
       Idle.watch();
-      });
+    });
   WorkflowsController.$inject = ['$scope','$rootScope','$state', '$window', 'Authentication', 'workflowResolve',
     'Modelfactory', 'flowchartConstants', '$modal', '$http', 'WKdraftService','WorkflowsValidationService', '$interval', 'Constants', 'EnterpriseManager'];
 

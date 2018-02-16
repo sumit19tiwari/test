@@ -39,7 +39,7 @@ exports.list = function(req, res) {
 
   Wkdraft.find({ draftId: id }).sort('-created').exec(function (err, list) {
     if (err) {
-      return next(err);
+      console.log(err);
     } else if (!list) {
       return res.status(404).send({
         message: 'No Wkdraft List with that identifier has been found'
@@ -86,7 +86,7 @@ exports.read = function(req,res){
   workflow.isCurrentUserOwner = req.user && workflow.user && workflow.user._id.toString() === req.user._id.toString();
 
   res.jsonp(workflow);
-}
+};
 
 /**
  * List of Wkdrafts
@@ -139,7 +139,7 @@ exports.wkdraftByEid = function(req, res, next, id) {
 exports.wkdraftBy_id = function(req, res, next , id){
   console.log('id',id);
   if (!mongoose.Types.ObjectId.isValid(id)) {
-     return res.status(400).send({
+    return res.status(400).send({
       message: 'Invalid draft ID'
     });
   }
@@ -154,4 +154,4 @@ exports.wkdraftBy_id = function(req, res, next , id){
     req.wkDraft = wkDraft;
     next();
   });
-}
+};

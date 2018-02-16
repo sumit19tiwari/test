@@ -11,10 +11,7 @@
 
     var vm = this;
     var enterprise = EnterpriseManager.load(),
-
-      //url = 'api/'+enterprise + draftId +'/workflows';
-
-    url = '/api/workflows/'+enterprise +'/draft';
+      url = '/api/workflows/'+enterprise +'/draft';
       
     $http.get(url).then(function (response) {
       vm.workflows = response.data;
@@ -47,10 +44,10 @@
           scope: $scope,
           appendTo: parentElem
         });
-    }
+    };
   }
 
-   angular
+  angular
     .module('workflows')
     .controller('ShowDraftMessageModalController', ShowDraftMessageModalController);
 
@@ -61,11 +58,11 @@
     $scope.ok = function() {
       $modalInstance.dismiss('ok');
        //$state.go('workflows.list');
-    }
+    };
 
     $scope.cancel = function() {
       $modalInstance.dismiss('cancel');
-    }
+    };
   }
 
 }());
