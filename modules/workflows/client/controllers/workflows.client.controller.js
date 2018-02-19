@@ -400,22 +400,19 @@
     }
 
     function saveDrafts() {
-      console.log('save draft is called');
+      //console.log('save draft is called');
       if(document.cookie.indexOf('name')>=0){
         var value = document.cookie;
         var cookieValue = value.split(';');
-        console.log('cookieValue',cookieValue);
+        //console.log('cookieValue',cookieValue);
         if (cookieValue.length > 1) {
             //parts = parts.pop().split(";").shift();
           cookieValue = cookieValue[0];
         }
-        console.log('cookie',cookieValue);
-        console.log('cookie is called');
+        //console.log('cookie',cookieValue);
         var draft = JSON.parse(cookieValue);
-        console.log('after jsonparse draft',draft);
         WKdraftService.save(draft, function(sucess){
           document.cookie = 'name' + ':;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-          console.log('after deletion cookie value',JSON.stringify(document.cookie));
         },function(error){
           document.cookie = JSON.stringify(draft);
         });
@@ -423,7 +420,6 @@
       createWorkflowdDataFromVisualData(function (data) {     
         //console.log(data.wkdata);
         if (data.wkdata.length > 0) {
-          console.log('data is greater');
           var draft = {};
           draft.name = (new Date()).toISOString();
           draft.visualdata = vm.model;
@@ -435,8 +431,6 @@
             //console.log(success);
           }, function (error) { // failureCB
             console.log(error);
-            console.log('error is called');
-            console.log('draft',draft);
             //document.cookie = "draft = {};draft.name = (new Date()).toISOString(); draft.visualdata = vm.model;draft.data = data.wkdata;draft.draftId = currentDraftID;draft.eid = enterprise;"
             document.cookie = JSON.stringify(draft);
             console.log('cookie',document.cookie);
@@ -448,28 +442,14 @@
     // Saving draft every 1 minute.
     var timeout;    
     function startSavingDrafts() {
-      console.log('setTimeOut is called');  
-      //saveDrafts();
-      //$interval(saveDrafts, 10000);
-      /*document.onmousemove = function(){
-        clearTimeout(timeout);
-        timeout = setTimeout(function(){
-          console.log('setTimeOut is called');
-          saveDrafts();
-        }, 10000);
-      }; */
-      /*$scope.$on('IdleTimeout', function() {
-        console.log('inside idle time out is called');    
-        saveDrafts();
-        Idle.watch();
-      });*/
+      //console.log('setTimeOut is called');  
       $scope.$on('IdleStart', function() {
-        console.log('Idle start is called');
+        //console.log('Idle start is called');
         saveDrafts();
        // the user appears to have gone idle
       });
       $scope.$on('IdleEnd', function() {
-        console.log('Idle end is called');
+        //console.log('Idle end is called');
       });
 
     }

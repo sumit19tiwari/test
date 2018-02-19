@@ -115,6 +115,7 @@
         }
         if(res.statusCode === 200 && body) {
           var b = JSON.parse(body);
+          //console.log('getCourse Status body',b);
           resolve(b);
         }
       });
@@ -283,6 +284,10 @@
                 createDurationLogs(updatedJob, current);
               }
             });
+          }
+        }).catch(function(error){
+          if(error){
+            console.error('assigncourse promise rejected ->',error);
           }
         });
       });

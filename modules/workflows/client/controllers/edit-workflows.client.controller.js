@@ -97,7 +97,7 @@
 
 
     function reloadModel() {
-      console.log('reloadModel is called');
+      //console.log('reloadModel is called');
       angular.forEach(vm.model.nodes, function(value) {
         saveConnectorMapping(value);  
       });
@@ -122,7 +122,7 @@
       }
 
       // TODO: move create/update logic to service
-      console.log('edit vm workflow',vm.workflow);
+      //console.log('edit vm workflow',vm.workflow);
       if (vm.workflow._id) {
         vm.workflow.$update(successCallback, errorCallback);
       } else {
@@ -411,18 +411,16 @@
       if(document.cookie.indexOf('name')>=0){
         var value = document.cookie;
         var cookieValue = value.split(';');
-        console.log('cookieValue',cookieValue);
+        //console.log('cookieValue',cookieValue);
         if (cookieValue.length > 1) {
             //parts = parts.pop().split(";").shift();
           cookieValue = cookieValue[0];
         }
-        console.log('cookie',cookieValue);
-        console.log('cookie is called');
         var draft = JSON.parse(cookieValue);
-        console.log('edit after jsonparse draft',draft);
+        //console.log('edit after jsonparse draft',draft);
         WKdraftService.save(draft, function(sucess){
           document.cookie = 'name' + ':;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-          console.log('after deletion cookie value',JSON.stringify(document.cookie));
+          //console.log('after deletion cookie value',JSON.stringify(document.cookie));
         },function(error){
           document.cookie = JSON.stringify(draft);
         });
@@ -430,7 +428,6 @@
       createWorkflowdDataFromVisualData(function (data) {    
         //console.log(data.wkdata);
         if (data.wkdata.length > 0) {
-          console.log('data is greater');
           var draft = {};
           draft.name = (new Date()).toISOString();
           draft.visualdata = vm.model;
@@ -442,11 +439,9 @@
             //console.log(success);
           }, function (error) { // failureCB
             console.log(error);
-            console.log('error is called');
-            console.log('draft',draft);
+            //console.log('draft',draft);
             //document.cookie = "draft = {};draft.name = (new Date()).toISOString(); draft.visualdata = vm.model;draft.data = data.wkdata;draft.draftId = currentDraftID;draft.eid = enterprise;"
             document.cookie = JSON.stringify(draft);
-            console.log('cookie',document.cookie);
           });
         }
       });
@@ -455,13 +450,12 @@
     function startSavingDrafts() {
       //saveDrafts();
       //$interval(saveDrafts, 10000);
-      console.log('start saving drafts is called');
       $scope.$on('IdleStart', function() {
-        console.log('Idle start is called');
+        //console.log('Idle start is called');
         saveDrafts();
       });
       $scope.$on('IdleEnd', function() {
-        console.log('Idle end is called');
+        //console.log('Idle end is called');
       });
 
     }

@@ -22,11 +22,11 @@
     vm.authentication = Authentication;
     vm.workflow = workflow;
     vm.wkdraft=wkdraft;
-    console.log('workflow',vm.workflow);
-    console.log('wkdraft',vm.wkdraft);
+    //console.log('workflow',vm.workflow);
+    //console.log('wkdraft',vm.wkdraft);
     
     vm.model = vm.wkdraft.data.visualdata;
-    //console.log('---------vm.model',vm.model);
+    console.log('---------vm.model',vm.model);
     //console.log('---------vm.workflow',vm.workflow);
     stateIdValue.splice(0,stateIdValue.length);
   
@@ -103,7 +103,6 @@
 
     // Save Workflow
     function save(isValid) {
-      console.log('save is called');
       if (!isValid) {
         //console.log(vm.workflow);
         return false;
@@ -115,13 +114,13 @@
         alert('Invalid Workflow ');
         return false;
       }
-      console.log('vm.wkdraft',vm.wkdraft);
-      console.log('vm.workflow',vm.workflow);
+      //console.log('vm.wkdraft',vm.wkdraft);
+      //console.log('vm.workflow',vm.workflow);
       //merging workflow and wkdraft data
       vm.workflow=angular.extend(vm.workflow, vm.wkdraft); 
       // TODO: move create/update logic to service
 
-      console.log('vm.workflow after merging',vm.workflow);
+     // console.log('vm.workflow after merging',vm.workflow);
       if (vm.wkdraft.data._id) {
         vm.workflow.$update(successCallback, errorCallback);
       } else {
@@ -157,6 +156,7 @@
     vm.deleteEdge = function() {
       var selectedEdges = vm.modelservice.edges.getSelectedEdges();
       angular.forEach(selectedEdges, function(edge) {
+        console.log('selected edges',edge);
         vm.modelservice.edges.delete(edge);
        // edgeMappingList.splice('E' + edge.source, 1);
         delete edgeMappingList['E' + edge.source];
@@ -169,10 +169,12 @@
       var selectedNodes = vm.modelservice.nodes.getSelectedNodes();
       stateCount--;
       angular.forEach(selectedNodes, function(node) {
+        //console.log('deleted nodes',node);
         vm.modelservice.nodes.delete(node);
         var stateIds=stateIdValue;
         stateIds.splice(stateIds.indexOf(node.id) , 1);
         stateIds=stateIds;
+        //console.log('stateId',stateIds);
       });
     };
 
@@ -400,7 +402,6 @@
           //if (vm.workflow.visualdata.nodes.length === counter) {
           data.wkdata = dataPushed;
           data.wktransitions = tcounter;
-          //console.log('@@@@@@@@@@@@@@@@@@data',data);
           callback(data);
         }
       }
@@ -412,7 +413,6 @@
       createWorkflowdDataFromVisualData(function (data) {    
         //console.log(data.wkdata);
         if (data.wkdata.length > 0) {
-          console.log('data is greater');
           var draft = {};
           draft.name = (new Date()).toISOString();
           draft.visualdata = vm.model;
@@ -424,8 +424,7 @@
             //console.log(success);
           }, function (error) { // failureCB
             console.log(error);
-            console.log('error is called');
-            console.log('draft',draft);
+           // console.log('draft',draft);
           });
         }
       });
@@ -462,12 +461,9 @@
     };
 
     $scope.$on('saveWorkflow', function (evt, data) {
-      createWorkflowdDataFromVisualData(function (cdata) {   
-        console.log('saveWorkflow is called');
-        console.log('vm.model',vm.model);
-        console.log('cdata',cdata);
-        console.log('data',data);
-        console.log('currentDraftID',currentDraftID); 
+      createWorkflowdDataFromVisualData(function (cdata) { 
+        //cdata.wktransitions is bottom connector node length in a workflow
+        //cdata.wkdata nodes  
         if(vm.model.edges.length > 0 && cdata.wktransitions > 0 && cdata.wkdata.length > 0) {
           vm.wkdraft.name = data.name;
           vm.wkdraft.visualdata = vm.model;
@@ -597,8 +593,6 @@
         return false;
       }
       //console.log(vm);
-      
-      console.log('inside edit setting controller vm.wkdraft',vm.wkdraft);
       $scope.$emit('saveWorkflow', vm.wkdraft);
       $modalInstance.dismiss('cancel');
     }

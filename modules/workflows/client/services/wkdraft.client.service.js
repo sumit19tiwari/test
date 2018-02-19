@@ -42,11 +42,10 @@
         });
       },
       getDraftById: function(wkDraftId, successCB ,failureCB){
-        console.log('getdraftApiservice is called');
-        console.log('wkDraftId',wkDraftId);
+        //console.log('getdraftApiservice is called');
+        //console.log('wkDraftId',wkDraftId);
         return $http.get('/api/workflows/wkdraft/'+wkDraftId).then(function successCallback(response) {
-          //console.log("##########################################");
-          console.log(response);
+          //console.log(response);
           successCB(response);
         },function errorCallback(response) {
 
