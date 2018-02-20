@@ -451,11 +451,11 @@
       //saveDrafts();
       //$interval(saveDrafts, 10000);
       $scope.$on('IdleStart', function() {
-        //console.log('Idle start is called');
+        console.log('Idle start is called');
         saveDrafts();
       });
       $scope.$on('IdleEnd', function() {
-        //console.log('Idle end is called');
+        console.log('Idle end is called');
       });
 
     }
